@@ -10,24 +10,47 @@
     <!--配置整合mybatis过程-->
     <!--1.配置数据库相关参数，properties的属性：${url}-->
     <context:property-placeholder location="classpath:jdbc.properties"/>
-    <!--2.数据库连接池-->
-    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-        <!--配置连接池属性-->
-        <property name="driverClass" value="${driver}"/>
-        <property name="jdbcUrl" value="${url}"/>
-        <property name="user" value="${username}"/>
-        <property name="password" value="${password}"/>
 
-        <!--c3po连接池的私有属性-->
-        <property name="maxPoolSize" value="30"/>
-        <property name="minPoolSize" value="10"/>
-        <!--关闭连接后不自动commit-->
-        <property name="autoCommitOnClose" value="false"/>
-        <!--获取连接超时时间-->
-        <property name="checkoutTimeout" value="1000"/>
-        <!--获取连接失败后重试次数-->
-        <property name="acquireRetryAttempts" value="2"/>
+    <!--2.连接池一：c3p0数据库连接池配置-->
+    <!--<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">-->
+        <!--&lt;!&ndash;配置连接池属性&ndash;&gt;-->
+        <!--<property name="driverClass" value="${driver}"/>-->
+        <!--<property name="jdbcUrl" value="${url}"/>-->
+        <!--<property name="user" value="${username}"/>-->
+        <!--<property name="password" value="${password}"/>-->
+
+        <!--&lt;!&ndash;c3po连接池的私有属性&ndash;&gt;-->
+        <!--<property name="maxPoolSize" value="30"/>-->
+        <!--<property name="minPoolSize" value="10"/>-->
+        <!--&lt;!&ndash;关闭连接后不自动commit&ndash;&gt;-->
+        <!--<property name="autoCommitOnClose" value="false"/>-->
+        <!--&lt;!&ndash;获取连接超时时间&ndash;&gt;-->
+        <!--<property name="checkoutTimeout" value="1000"/>-->
+        <!--&lt;!&ndash;获取连接失败后重试次数&ndash;&gt;-->
+        <!--<property name="acquireRetryAttempts" value="2"/>-->
+    <!--</bean>-->
+
+    <!--2.连接池二：HiKariCP连接池配置-->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <!--poolName属性自定义即可-->
+        <property name="poolName" value="springHikariCP" />
+        <property name="driverClassName" value="${driver}"/>
+        <property name="jdbcUrl" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+        <property name="maximumPoolSize" value="100"/>
+        <property name="minimumIdle" value="10"/>
+        <property name="connectionTestQuery" value="select 1"/>
+        <property name="dataSourceProperties">
+            <props>
+                <prop key="cachePrepStmts">true</prop>
+                <prop key="prepStmtCacheSize">250</prop>
+                <prop key="prepStmtCacheSqlLimit">2048</prop>
+                <prop key="useServerPrepStmts">true</prop>
+            </props>
+        </property>
     </bean>
+
 
     <!--约定大于配置-->
     <!--3.配置sqlSessionFactory对象-->
